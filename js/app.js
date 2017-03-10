@@ -31,15 +31,23 @@ var Article = React.createClass({
             visible: false
         };
     },
+
     readmoreClick: function(e) {
-        // debugger
-        if (e.preventDefault().lenght > 0){
-            this.setState({visible: true})
-        } else {
-            this.setState({visible: false})
-        }
+        e.preventDefault();
+        this.setState({visible: true});
     },
 
+    descButton: function(description, visible){
+        if (description) {
+            return(
+                <div>
+                    <a href="#" onClick={this.readmoreClick} className={'news__readmore ' + (visible ? 'none': '')}> Подробнее </a>
+                    <p className={'news__big-text ' + (visible ? '': 'none')}>{description}</p>
+                </div>
+            )
+        }
+    },
+    
     render: function() {
         var author = this.props.data.author,
             text = this.props.data.text,
@@ -50,8 +58,7 @@ var Article = React.createClass({
             <div className='article'>
                 <p className='news__author'>{author}:</p>
                 <p className='news__text'>{text}</p>
-                <a href="#" onClick={this.readmoreClick} className={'news__readmore ' + (visible ? 'none': '')}> Подробнее </a>
-                <p className={'news__big-text ' + (visible ? '': 'none')}>{description}</p>
+                { this.descButton(description, visible) }
             </div>
         )
     }
