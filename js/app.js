@@ -32,9 +32,14 @@ var Article = React.createClass({
         };
     },
     readmoreClick: function(e) {
-        e.preventDefault();
-        this.setState({visible: true});
+        // debugger
+        if (e.preventDefault().lenght > 0){
+            this.setState({visible: true})
+        } else {
+            this.setState({visible: false})
+        }
     },
+
     render: function() {
         var author = this.props.data.author,
             text = this.props.data.text,
@@ -45,11 +50,7 @@ var Article = React.createClass({
             <div className='article'>
                 <p className='news__author'>{author}:</p>
                 <p className='news__text'>{text}</p>
-                <a href="#"
-                   onClick={this.readmoreClick}
-                   className={'news__readmore ' + (visible ? 'none': '')}>
-                    Подробнее
-                </a>
+                <a href="#" onClick={this.readmoreClick} className={'news__readmore ' + (visible ? 'none': '')}> Подробнее </a>
                 <p className={'news__big-text ' + (visible ? '': 'none')}>{description}</p>
             </div>
         )
@@ -61,7 +62,8 @@ var Add = React.createClass({
         return {
             agreeNotChecked: true,
             authorIsEmpty: true,
-            textIsEmpty: true
+            textIsEmpty: true,
+            descIsEmpty: true
         };
     },
     componentDidMount: function() {
@@ -70,20 +72,25 @@ var Add = React.createClass({
     onBtnClickHandler: function(e) {
         e.preventDefault();
         var textEl = ReactDOM.findDOMNode(this.refs.text);
+        var descriptionEL = ReactDOM.findDOMNode(this.refs.description);
 
         var author = ReactDOM.findDOMNode(this.refs.author).value;
+        var description = ReactDOM.findDOMNode(this.refs.description).value;
+        
         var text = textEl.value;
 
         var item = [{
             author: author,
             text: text,
-            dascription: '...'
+            description: description
         }];
 
         window.ee.emit('News.add', item);
 
         textEl.value = '';
-        this.setState({textIsEmpty: true});  //сгенерируй событие 'News.add' и передай в качестве данных - item.
+        descriptionEL.value = '';
+
+        this.setState({textIsEmpty: true, descIsEmpty: true});  //сгенерируй событие 'News.add' и передай в качестве данных - item.
     },
 
     onCheckRuleClick: function(e) {
@@ -99,12 +106,15 @@ var Add = React.createClass({
     render: function() {
         var agreeNotChecked = this.state.agreeNotChecked,
             authorIsEmpty = this.state.authorIsEmpty,
-            textIsEmpty = this.state.textIsEmpty;
+            textIsEmpty = this.state.textIsEmpty,
+            descIsEmpty = this.state.descIsEmpty;
         return (
             <form className='add cf'>
                 <input type='text' className='add__author' onChange={this.onFieldChange.bind(this, 'authorIsEmpty')} placeholder='Ваше имя' ref='author' />
 
-        <textarea className='add__text' onChange={this.onFieldChange.bind(this, 'textIsEmpty')} placeholder='Текст новости' ref='text'></textarea>
+                <textarea className='add__text' onChange={this.onFieldChange.bind(this, 'textIsEmpty')} placeholder='Аннотация' ref='text'></textarea>
+
+                <textarea className='add__text' onChange={this.onFieldChange.bind(this, 'descIsEmpty')} placeholder='Полный текст' ref='description'></textarea>
 
                 <label className='add__checkrule'>
                     <input type='checkbox' ref='checkrule' onChange={this.onCheckRuleClick}/>Я согласен с правилами
